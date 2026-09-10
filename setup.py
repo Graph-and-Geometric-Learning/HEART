@@ -2,5 +2,5 @@ from setuptools import find_packages, setup
 
 setup(
     name='heart',
-    packages=['heart'],
+    packages=find_packages(),
 )

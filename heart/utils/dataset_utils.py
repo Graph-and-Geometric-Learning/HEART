@@ -5,8 +5,8 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
  
-from utils.token_utils import EHRTokenizer
-from utils.bert_dataset_utils import PretrainEHRDataset, FinetuneEHRDataset
+from heart.utils.token_utils import EHRTokenizer
+from heart.utils.bert_dataset_utils import PretrainEHRDataset, FinetuneEHRDataset
 
 
 def _pad_sequence(seqs, pad_id=0):
@@ -15,7 +15,7 @@ def _pad_sequence(seqs, pad_id=0):
     return torch.cat([F.pad(x, (0, max_len - x.shape[1]), "constant", pad_id) for x in seqs], dim=0)
 
 
-class HBERTPretrainEHRDataset(PretrainEHRDataset):
+class HEARTPretrainEHRDataset(PretrainEHRDataset):
     def __init__(self, data_pd, tokenizer: EHRTokenizer, token_type=['diag', 'med', 'pro', 'lab'], mask_rate=0.15, anomaly_rate=0.1):
         super().__init__(data_pd, tokenizer, token_type)
         
@@ -87,7 +87,7 @@ class HBERTPretrainEHRDataset(PretrainEHRDataset):
         return input_tokens, token_types, edge_index, visit_positions, masked_labels, anomaly_labels
 
 
-class HBERTFinetuneEHRDataset(FinetuneEHRDataset):
+class HEARTFinetuneEHRDataset(FinetuneEHRDataset):
     def __init__(self, data_pd, tokenizer, token_type=['diag', 'med', 'pro', 'lab'], task='death'):
         super().__init__(data_pd, tokenizer, token_type, task)
 

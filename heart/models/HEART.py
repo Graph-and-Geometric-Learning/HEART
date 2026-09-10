@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 from heart.models.gnn import DotAttnConv
 from heart.models.transformer import TransformerBlock
-from heart.models.transformer_edge import EdgeTransformerBlock, EdgeModule
+from heart.models.transformer_rel import EdgeTransformerBlock, EdgeModule
 
 from time import time
 
@@ -47,9 +47,9 @@ class TreeEmbeddings(nn.Module):
         return self.emb_dropout(words_embeddings)
 
 
-class HBERTEmbeddings(nn.Module):
+class HEARTEmbeddings(nn.Module):
     def __init__(self, config):
-        super(HBERTEmbeddings, self).__init__()
+        super(HEARTEmbeddings, self).__init__()
         self.word_embeddings = nn.Embedding(config.vocab_size, config.hidden_size, padding_idx=0)  # [PAD] token
         self.emb_dropout = nn.Dropout(config.hidden_dropout_prob)
 
@@ -138,12 +138,12 @@ class BinaryPredictionHead(nn.Module):
         return self.cls(input)
 
 
-class HBERT_Pretrain(nn.Module):
+class HEART_Pretrain(nn.Module):
     def __init__(self, config, tokenizer):
-        super(HBERT_Pretrain, self).__init__()
+        super(HEART_Pretrain, self).__init__()
 
         if config.diag_med_emb == "simple":
-            self.embeddings = HBERTEmbeddings(config)
+            self.embeddings = HEARTEmbeddings(config)
         elif config.diag_med_emb == "tree":
             diag_tree_table, med_tree_table = tokenizer.diag_tree_table, tokenizer.med_tree_table
             n_diag_tokens, n_med_tokens = len(tokenizer.diag_tree_voc.idx2word), len(tokenizer.med_tree_voc.idx2word)
@@ -207,12 +207,12 @@ class HBERT_Pretrain(nn.Module):
         return ave_loss / len(loss_dict), loss_dict
 
 
-class HBERT_Finetune(nn.Module):
+class HEART_Finetune(nn.Module):
     def __init__(self, config, tokenizer):
-        super(HBERT_Finetune, self).__init__()
+        super(HEART_Finetune, self).__init__()
 
         if config.diag_med_emb == "simple":
-            self.embeddings = HBERTEmbeddings(config)
+            self.embeddings = HEARTEmbeddings(config)
         elif config.diag_med_emb == "tree":
             diag_tree_table, med_tree_table = tokenizer.diag_tree_table, tokenizer.med_tree_table
             n_diag_tokens, n_med_tokens = len(tokenizer.diag_tree_voc.idx2word), len(tokenizer.med_tree_voc.idx2word)

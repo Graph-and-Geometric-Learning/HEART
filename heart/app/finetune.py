@@ -17,8 +17,8 @@ from torch.utils.data import DataLoader
 
 from heart.utils import set_random_seed
 from heart.utils.token_utils import EHRTokenizer
-from heart.utils.dataset_utils import HBERTFinetuneEHRDataset, batcher
-from heart.models.HBERT import HBERT_Finetune
+from heart.utils.dataset_utils import HEARTFinetuneEHRDataset, batcher
+from heart.models.HEART import HEART_Finetune
 from heart.utils.metric_utils import eval_precisionk, eval_recallk, eval_ndcgk
 
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
@@ -93,9 +93,9 @@ def read_data(args, all_data_path, finetune_data_path):
         tokenizer.build_tree()
 
     train_data, val_data, test_data = pickle.load(open(finetune_data_path, 'rb'))
-    train_dataset = HBERTFinetuneEHRDataset(train_data, tokenizer, token_type=args.predicted_token_type, task=args.task)
-    val_dataset = HBERTFinetuneEHRDataset(val_data, tokenizer, token_type=args.predicted_token_type, task=args.task)
-    test_dataset = HBERTFinetuneEHRDataset(test_data, tokenizer, token_type=args.predicted_token_type, task=args.task)
+    train_dataset = HEARTFinetuneEHRDataset(train_data, tokenizer, token_type=args.predicted_token_type, task=args.task)
+    val_dataset = HEARTFinetuneEHRDataset(val_data, tokenizer, token_type=args.predicted_token_type, task=args.task)
+    test_dataset = HEARTFinetuneEHRDataset(test_data, tokenizer, token_type=args.predicted_token_type, task=args.task)
     
     train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, collate_fn=batcher(tokenizer, is_train=False), shuffle=True)
     val_dataloader = DataLoader(val_dataset, batch_size=args.eval_batch_size, collate_fn=batcher(tokenizer, is_train=False), shuffle=False)
@@ -105,7 +105,7 @@ def read_data(args, all_data_path, finetune_data_path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='HBERT')
+    parser = argparse.ArgumentParser(description='HEART')
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument('--dataset', type=str, default="mimic", help="mimic,eicu")
     parser.add_argument('--device', type=int, default=0)
@@ -138,7 +138,7 @@ def main():
 
     set_random_seed(args.seed)
 
-    exp_name = "HBERT" \
+    exp_name = "HEART" \
         + "-" + str(args.encoder) \
         + "-" + str(args.pretrain_mask_rate) \
         + "-" + str(args.pretrain_anomaly_rate) \
@@ -196,7 +196,7 @@ def main():
     args.label_vocab_size = len(tokenizer.diag_voc.idx2word)  # only for diagnosis
 
     device = torch.device(f"cuda:{args.device}" if torch.cuda.is_available() else "cpu")
-    model = HBERT_Finetune(args, tokenizer)
+    model = HEART_Finetune(args, tokenizer)
     logging.info(f"initialize model")
     if args.pretrain_epoch > 0:
         model.load_weight(torch.load(pretrained_weight_path))

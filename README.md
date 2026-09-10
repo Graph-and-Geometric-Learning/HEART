@@ -17,7 +17,13 @@ We have provided the preprocessing scripts in `dataset/` for MIMIC-III and eICU 
 The code has been tested running under Python 3.10.14. The required packages are as follows:
 - pytorch == 2.3.0
 - torch_geometric == 2.5.3
+- torch_scatter == 2.1.2
 - einops == 0.8.0
+- numpy
+- pandas
+- scikit-learn
+- tqdm
+- wandb
 
 Once you finished these installation, please run install the package by running:
 ```
@@ -39,3 +45,12 @@ The code is organized as follows:
     - `transformer_rel.py`: implementation of the transformer with heterogeneous relations
     - `transformer.py`: implementation of the transformer
 - `utils/`: utility functions including data loading pipeline
+
+## Usage
+
+Note that the data paths and the checkpoint paths in `app/pretrain.py` and `app/finetune.py` are hard-coded (`/home/username/ehr_bert/...`), please update them to your own paths before running. Then run:
+
+```
+python heart/app/pretrain.py --dataset mimic
+python heart/app/finetune.py --dataset mimic --task death
+```

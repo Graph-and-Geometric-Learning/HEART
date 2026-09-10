@@ -15,8 +15,8 @@ from torch.utils.data import DataLoader
 
 from heart.utils import set_random_seed
 from heart.utils.token_utils import EHRTokenizer
-from heart.utils.dataset_utils import HBERTPretrainEHRDataset, batcher
-from heart.model.HBERT import HBERT_Pretrain
+from heart.utils.dataset_utils import HEARTPretrainEHRDataset, batcher
+from heart.models.HEART import HEART_Pretrain
 
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
@@ -41,13 +41,13 @@ def read_data(args, all_data_path, pretrain_data_path):
     tokenizer = EHRTokenizer(diag_sentences, med_sentences, lab_sentences, pro_sentences, gender_set, age_set, age_gender_set, special_tokens=args.special_tokens)
     if args.dataset == "mimic":
         tokenizer.build_tree()
-    dataset = HBERTPretrainEHRDataset(ehr_pretrain_data, tokenizer, token_type=args.predicted_token_type, mask_rate=args.mask_rate)
+    dataset = HEARTPretrainEHRDataset(ehr_pretrain_data, tokenizer, token_type=args.predicted_token_type, mask_rate=args.mask_rate)
     dataloader = DataLoader(dataset, batch_size=args.batch_size, collate_fn=batcher(tokenizer, n_token_type=len(args.predicted_token_type)), shuffle=True)
     return tokenizer, dataloader
 
 
 def main():
-    parser = argparse.ArgumentParser(description='HBERT')
+    parser = argparse.ArgumentParser(description='HEART')
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument('--dataset', type=str, default="mimic", help="mimic,eicu")
     parser.add_argument('--device', type=int, default=3)
@@ -76,7 +76,7 @@ def main():
 
     set_random_seed(args.seed)
 
-    exp_name = "Pretrain-HBERT" \
+    exp_name = "Pretrain-HEART" \
         + "-" + str(args.dataset) \
         + "-" + str(args.encoder) \
         + "-" + str(args.mask_rate) \
@@ -150,7 +150,7 @@ def main():
         loss_entity = ["diag", "med", "lab", "anomaly"]
 
     device = torch.device(f"cuda:{args.device}" if torch.cuda.is_available() else "cpu")
-    model = HBERT_Pretrain(args, tokenizer).to(device)
+    model = HEART_Pretrain(args, tokenizer).to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
     logging.info(f"initialize model")
 

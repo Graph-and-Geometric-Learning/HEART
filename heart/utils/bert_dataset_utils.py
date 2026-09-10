@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
  
-from utils.token_utils import EHRTokenizer
+from heart.utils.token_utils import EHRTokenizer
 
 
 class PretrainEHRDataset(Dataset):

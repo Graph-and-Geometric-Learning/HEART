@@ -1,0 +1,38 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.so
+
+# Packaging / editable install (pip install -e .)
+build/
+dist/
+.eggs/
+*.egg
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environments
+.env
+.venv
+env/
+venv/
+
+# Training artifacts
+saved_model/
+checkpoints/
+wandb/
+*.pt
+*.pth
+*.log
+
+# Data: MIMIC-III / eICU are credentialed datasets, never commit them
+*.pkl
+*.csv
+*.csv.gz
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/

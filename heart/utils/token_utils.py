@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from utils.tree_utils import build_atc_tree, build_icd9_tree
+from heart.utils.tree_utils import build_atc_tree, build_icd9_tree
 
 
 class Voc(object):
